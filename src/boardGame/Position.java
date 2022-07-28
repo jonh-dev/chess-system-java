@@ -2,9 +2,11 @@ package boardGame;
 
 public class Position {
 
+    // Criando as variaveis linha e coluna
     private int row;
     private int column;
 
+    // Contrutor e Get and Setter
     public Position(int row, int column) {
         this.row = row;
         this.column = column;
@@ -26,6 +28,7 @@ public class Position {
         this.column = column;
     }
 
+    // Operação para atualizar os valores de uma posição
     public void setValues(int row, int column){
         this.row = row;
         this.column = column;
