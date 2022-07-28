@@ -6,16 +6,16 @@ import chess.ChessPiece;
 import chess.Color;
 
 // Herda de ChessPiece
-public class Rook extends ChessPiece {
+public class Bishop extends ChessPiece {
 
     // Contrutor de Rooks
-    public Rook(Board board, Color color) {
+    public Bishop(Board board, Color color) {
         super(board, color);
     }
 
     @Override
     public String toString(){
-        return "R";
+        return "B";
     } // String com a letra que representará a peça no tabuleiro
 
     // Método concreto de possible moves da peça rei
@@ -25,41 +25,41 @@ public class Rook extends ChessPiece {
 
         Position p = new Position(0, 0); // Instanciando uma nova posição em 0
 
-        // above
-        p.setValues(position.getRow() - 1, position.getColumn()); // Pega a posição da peça na linha e subtrai 1
+        // nw
+        p.setValues(position.getRow() - 1, position.getColumn() - 1); // Pega a posição da peça na linha e na coluna e subtrai 1
         while (getBoard().positionExists(p) && !getBoard().thereIsAPiece(p)){ // Enquanto existir uma posição no tabuleiro e não houver peça
             mat[p.getRow()][p.getColumn()] = true; // As posições estão disponiveis
-            p.setRow(p.getRow() - 1); // Modifica a posição inicial na direção norte da linha na matrix.
+            p.setValues(p.getRow() - 1, p.getColumn() - 1); // Modifica a posição inicial da linha e da coluna da peça na matrix.
         }
         if (getBoard().positionExists(p) && isThereOpponentPiece(p)){ // Se a posição existir e houver oponente
             mat[p.getRow()][p.getColumn()] = true; // A peça poderá avançar sobre aquela posição.
         }
 
-        // left
-        p.setValues(position.getRow(), position.getColumn() - 1); // Pega a posição da peça na coluna e subtrai 1
+        // ne
+        p.setValues(position.getRow() - 1, position.getColumn() + 1); // Pega a posição da peça na linha e subtrai 1 e na coluna e adiciona 1 na matrix
         while (getBoard().positionExists(p) && !getBoard().thereIsAPiece(p)){ // Enquanto existir uma posição no tabuleiro e não houver peça
             mat[p.getRow()][p.getColumn()] = true; // As posições estão disponiveis
-            p.setColumn(p.getColumn() - 1); // Modifica a posição inicial na direção leste da coluna na matrix.
+            p.setValues(p.getRow() - 1, p.getColumn() + 1); // Modifica a posição inicial da linha e da coluna da peça na matrix.
         }
         if (getBoard().positionExists(p) && isThereOpponentPiece(p)){ // Se a posição existir e houver oponente
             mat[p.getRow()][p.getColumn()] = true; // A peça poderá avançar sobre aquela posição.
         }
 
-        // right
-        p.setValues(position.getRow(), position.getColumn() + 1); // Pega a posição da peça na coluna e adiciona 1
+        // sw
+        p.setValues(position.getRow() + 1, position.getColumn() + 1); // Pega a posição da peça na linha e na coluna e adiciona 1
         while (getBoard().positionExists(p) && !getBoard().thereIsAPiece(p)){ // Enquanto existir uma posição no tabuleiro e não houver peça
             mat[p.getRow()][p.getColumn()] = true; // As posições estão disponiveis
-            p.setColumn(p.getColumn() + 1); // Modifica a posição inicial na direção oeste da coluna na matrix.
+            p.setValues(p.getRow() + 1, p.getColumn() + 1); // Modifica a posição inicial da linha e da coluna da peça na matrix.
         }
         if (getBoard().positionExists(p) && isThereOpponentPiece(p)){ // Se a posição existir e houver oponente
             mat[p.getRow()][p.getColumn()] = true; // A peça poderá avançar sobre aquela posição.
         }
 
-        // below
-        p.setValues(position.getRow() + 1, position.getColumn()); // Pega a posição da peça na linha e adiciona 1
+        // se
+        p.setValues(position.getRow() + 1, position.getColumn() - 1); // Pega a posição da peça na linha e adiciona 1
         while (getBoard().positionExists(p) && !getBoard().thereIsAPiece(p)){ // Enquanto existir uma posição no tabuleiro e não houver peça
             mat[p.getRow()][p.getColumn()] = true; // As posições estão disponiveis
-            p.setRow(p.getRow() + 1); //  Modifica a posição inicial na direção sul da linha na matrix.
+            p.setValues(p.getRow() + 1, p.getColumn() - 1); // Modifica a posição inicial da linha e da coluna da peça na matrix.
         }
         if (getBoard().positionExists(p) && isThereOpponentPiece(p)){ // Se a posição existir e houver oponente
             mat[p.getRow()][p.getColumn()] = true; // A peça poderá avançar sobre aquela posição.
