@@ -17,6 +17,7 @@ public class ChessMatch {
     private Color currentPlayer;
     private Board board;
     private boolean check;
+    private boolean checkMate;
 
     // Lista de peças no tabuleiro e peças capturadas.
     private List<Piece> piecesOnTheBoard = new ArrayList<>();
@@ -41,6 +42,10 @@ public class ChessMatch {
 
     public boolean getCheck() {
         return check;
+    }
+
+    public boolean getCheckMate(){
+        return checkMate;
     }
 
     public ChessPiece[][] getPieces(){
@@ -73,6 +78,10 @@ public class ChessMatch {
         }
 
         check = (testCheck(opponent(currentPlayer))) ? true : false; // Caso o oponente fique em check retorna true, caso contrario retorna false.
+
+        if (testCheck(opponent(currentPlayer))) { // Se o testeCheck permanecer no atual oponente
+            checkMate = true; // Check mate é true, ou seja o jogo acabou.
+        }
 
         nextTurn(); // Implementa o método para troca de turno.
         return (ChessPiece) capturedPiece; // Retorna a peça capturada, é feito um DownCast
@@ -156,6 +165,32 @@ public class ChessMatch {
             }
         }
         return false; // Se não houver check, retorna false.
+    }
+
+    // Método testando Check Mate
+    private boolean testeCheckMate(Color color){
+        if (!testCheck(color)){ // Se está cor não estiver em check;
+            return false; // Retorna false, pois a mesma não está em check mate
+        }
+        List<Piece> list = piecesOnTheBoard.stream().filter(x -> ((ChessPiece) x).getColor() == color).collect(Collectors.toList()); // Filtra na lista de qual cor é determinada peça Rei. É feito um DownCast de Piece para ChessPiece.
+        for (Piece p : list) { // Para cada peça p na lista do tabuleiro
+            boolean[][] mat = p.possibleMoves(); // Criando uma matrix de possiveis movimentos da peça
+            for (int i = 0; i < board.getRows(); i++){ // Percorre todas as linas do tabuleiro
+                for (int j = 0; j < board.getColumns(); j++){ // Percorre todas as colunas do tabuleiro
+                    if (mat[i][j]){ // Se tiver no i e no j que seja um movimento possivel tira do check
+                        Position source = ((ChessPiece)p).getChessPosition().toPosition(); // Pegando a posição de origem da peça p. Necessario um DownCast para poder pegar o Chess Position.
+                        Position target = new Position(i, j); // Pegando a posição de destino de acordo com a matrix mat.
+                        Piece capturedPiece = makeMove(source, target); // Fazendo o movimento da origem para o destino.
+                        boolean testCheck = testCheck(color); // Tester se o rei da cor atual ainda está em check
+                        undoMove(source, target, capturedPiece); // Desfazer o movimento teste.
+                        if (!testCheck){ // Se não estiver em check ainda
+                            return false; // Retorna false, pois não está em check mate.
+                        }
+                    }
+                }
+            }
+        }
+        return true; // Retorna true, está em check mate.
     }
 
     // Método para receber as coordenadas do xadrez para inseri-las no tabuleiro

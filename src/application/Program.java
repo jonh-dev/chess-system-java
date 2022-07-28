@@ -19,7 +19,7 @@ public class Program {
         ChessMatch chessMatch = new ChessMatch(); // Instanciando Partida de xadrez
         List<ChessPiece> captured = new ArrayList<>(); // Instanciando lista de peças capturadas no tabuleiro.
 
-        while (true){
+        while (!chessMatch.getCheckMate()){ // Enquando não estiver com check mate.
             try {
                 UI.clearScreen(); // Método de limpar a tela
                 UI.printMatch(chessMatch, captured); // Imprimi a partida de xadrez pela classe UI
@@ -48,6 +48,9 @@ public class Program {
                 sc.nextLine(); // Enter para pular uma linha
             }
         }
+
+        UI.clearScreen(); // Limpa a tela
+        UI.printMatch(chessMatch, captured); // Mostra a partida finalizada
 
     }
 }
