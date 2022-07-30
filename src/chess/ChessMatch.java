@@ -81,7 +81,7 @@ public class ChessMatch {
         validateTargetPosition(source, target); // Implementando a função para validar a posição de origem e a posição de destino
         Piece capturedPiece = makeMove(source, target); // Captura uma peça durante o movimento
 
-        if (testCheck(currentPlayer)){ // Se o atual jogador se colocar em check
+        if (testCheck(currentPlayer) || errorCastling(source, target)) { // Se o atual jogador se colocar em check
             undoMove(source, target, capturedPiece); // Chama o método voltar movimento
             throw new ChessException("You can't put yourself in check"); // Imprimi você não pode se colocar em check
         }
@@ -114,6 +114,35 @@ public class ChessMatch {
         }
 
         return (ChessPiece) capturedPiece; // Retorna a peça capturada, é feito um DownCast
+    }
+
+    // Método para acusar quando o castling não será possivel pois o rei é passivel de Check
+    private boolean errorCastling(Position source, Position target) {
+
+        ChessPiece movedPiece = (ChessPiece)board.piece(target); // Pega a peça movida no tabuleiro
+
+        boolean errorCastling = false; // Inicia como false
+
+        // Pega a posição entre o Rei e a torre
+        Position inBetween = new Position(source.getRow(), (source.getColumn()>target.getColumn()) ? source.getColumn() - 1 : target.getColumn() - 1);
+
+        // Identifica se a peça movida é Rei
+        if (movedPiece instanceof King) {
+            // Identifica se o rei em questão ja fez um Castling
+            if (Math.abs(source.getColumn() - target.getColumn()) == 2) {
+                // Verifica se as posições que o rei poderá se mover podem ser atacadas
+                Piece capturedPiece = makeMove(target, inBetween);
+
+                if (testCheck(currentPlayer)) { // Se nestas posições houver o check
+                    errorCastling = true; // O Castling não poderá ser feito
+                }
+
+
+                undoMove(target, inBetween, capturedPiece); //
+            }
+        }
+        return errorCastling;
+
     }
 
     // Método para troca de peça promovida
@@ -314,7 +343,7 @@ public class ChessMatch {
                         Position source = ((ChessPiece)p).getChessPosition().toPosition(); // Pegando a posição de origem da peça p. Necessario um DownCast para poder pegar o Chess Position.
                         Position target = new Position(i, j); // Pegando a posição de destino de acordo com a matrix mat.
                         Piece capturedPiece = makeMove(source, target); // Fazendo o movimento da origem para o destino.
-                        boolean testCheck = testCheck(color); // Tester se o rei da cor atual ainda está em check
+                        boolean testCheck = testCheck(color); // Testar se o rei da cor atual ainda está em check
                         undoMove(source, target, capturedPiece); // Desfazer o movimento teste.
                         if (!testCheck){ // Se não estiver em check ainda
                             return false; // Retorna false, pois não está em check mate.
