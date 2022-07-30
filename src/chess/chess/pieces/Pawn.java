@@ -2,14 +2,19 @@ package chess.chess.pieces;
 
 import boardGame.Board;
 import boardGame.Position;
+import chess.ChessMatch;
 import chess.ChessPiece;
 import chess.Color;
 
 public class Pawn extends ChessPiece {
 
+    // Declarando Variaveis
+    private ChessMatch chessMatch;
 
-    public Pawn(Board board, Color color) {
+    // Construtor
+    public Pawn(Board board, Color color, ChessMatch chessMatch) {
         super(board, color);
+        this.chessMatch = chessMatch;
     }
 
     @Override
@@ -36,6 +41,19 @@ public class Pawn extends ChessPiece {
             if (getBoard().positionExists(p) && isThereOpponentPiece(p)){ // Se houve a posição no tabuleiro existe e se houver peça do oponente na mesma
                 mat[p.getRow()][p.getColumn()] = true; // Então o peão poderá ir até essa posição
             }
+
+            // # Special move En Passant White
+            if (position.getRow() == 3) { // Se a posição for a linha 3 da matrix
+                Position left = new Position(position.getRow(), position.getColumn() - 1); // Pegando a posição do peão vulneravel ao En Passant que está a esquerda do peão
+                if (getBoard().positionExists(left) && isThereOpponentPiece(left) && getBoard().piece(left) == chessMatch.getEnPassantVulnerable()) { // Se a posição a esquerda existir e lá exixstir uma peça e essa peça esteja vulneravel ao En Passant
+                    mat[left.getRow() - 1][left.getColumn()] = true; // Então o peão poderá se mover acima da peça do oponente e realizar o En Passant
+                }
+                Position right = new Position(position.getRow(), position.getColumn() + 1); // Pegando a posição do peão vulneravel ao En Passant que está a esquerda do peão
+                if (getBoard().positionExists(right) && isThereOpponentPiece(right) && getBoard().piece(right) == chessMatch.getEnPassantVulnerable()) { // Se a posição a esquerda existir e lá exixstir uma peça e essa peça esteja vulneravel ao En Passant
+                    mat[right.getRow() - 1][right.getColumn()] = true; // Então o peão poderá se mover acima da peça do oponente e realizar o En Passant
+                }
+            }
+
         } else {
             p.setValues(position.getRow() + 1, position.getColumn()); // Pega a posição do peão na linha e diminui 1 na matrix
             if (getBoard().positionExists(p) && !getBoard().thereIsAPiece(p)){ // Se houve a posição no tabuleiro e a mesma não houver peça
@@ -53,6 +71,18 @@ public class Pawn extends ChessPiece {
             p.setValues(position.getRow() + 1, position.getColumn() + 1); // Pega a posição do peão na linha e na coluna e diminui 1 na matrix
             if (getBoard().positionExists(p) && isThereOpponentPiece(p)){ // Se houve a posição no tabuleiro existe e se houver peça do oponente na mesma
                 mat[p.getRow()][p.getColumn()] = true; // Então o peão poderá ir até essa posição
+            }
+
+            // # Special move En Passant Black
+            if (position.getRow() == 4) { // Se a posição for a linha 3 da matrix
+                Position left = new Position(position.getRow(), position.getColumn() - 1); // Pegando a posição do peão vulneravel ao En Passant que está a esquerda do peão
+                if (getBoard().positionExists(left) && isThereOpponentPiece(left) && getBoard().piece(left) == chessMatch.getEnPassantVulnerable()) { // Se a posição a esquerda existir e lá exixstir uma peça e essa peça esteja vulneravel ao En Passant
+                    mat[left.getRow() + 1][left.getColumn()] = true; // Então o peão poderá se mover acima da peça do oponente e realizar o En Passant
+                }
+                Position right = new Position(position.getRow(), position.getColumn() + 1); // Pegando a posição do peão vulneravel ao En Passant que está a esquerda do peão
+                if (getBoard().positionExists(right) && isThereOpponentPiece(right) && getBoard().piece(right) == chessMatch.getEnPassantVulnerable()) { // Se a posição a esquerda existir e lá exixstir uma peça e essa peça esteja vulneravel ao En Passant
+                    mat[right.getRow() + 1][right.getColumn()] = true; // Então o peão poderá se mover acima da peça do oponente e realizar o En Passant
+                }
             }
         }
 
