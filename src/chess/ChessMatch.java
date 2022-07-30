@@ -5,6 +5,7 @@ import boardGame.Piece;
 import boardGame.Position;
 import chess.chess.pieces.*;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,8 +18,8 @@ public class ChessMatch {
     private Board board;
     private boolean check;
     private boolean checkMate;
-
     private ChessPiece enPassantVulnerable;
+    private ChessPiece promoted;
 
     // Lista de peças no tabuleiro e peças capturadas.
     private List<Piece> piecesOnTheBoard = new ArrayList<>();
@@ -53,6 +54,10 @@ public class ChessMatch {
         return enPassantVulnerable;
     }
 
+    public ChessPiece getPromoted() {
+        return promoted;
+    }
+
     public ChessPiece[][] getPieces(){
         ChessPiece[][] mat = new ChessPiece[board.getRows()][board.getColumns()]; // Instancia ChessPiece com o tamanho de linhas e colunas do Board
         for (int i = 0; i < board.getRows(); i++){ // Percorre todas as linas do tabuleiro
@@ -84,6 +89,16 @@ public class ChessMatch {
 
         ChessPiece movedPiece = (ChessPiece)board.piece(target); // Pega a peça que se moveu, que agora se encontra no destino
 
+        // # Special move promotion
+
+        promoted = null; // Promoção começa como nulo
+        if (movedPiece instanceof Pawn) { // Se a peça movida for peão
+            if ((movedPiece.getColor() == Color.WHITE && target.getRow() == 0 || (movedPiece.getColor() == Color.BLACK && target.getRow() == 7))){ // Se a peça movida for igual a cor branca e chegar a linha 0 da matrix ou a peça movida for preta e chegar a linha 8 da matrix
+                promoted = (ChessPiece) board.piece(target); // A peça que chegar a esse trajeto recebe a promoção
+                promoted = replacePromotedPiece("Q"); // E por padrão é trocada pela Rainha
+            }
+        }
+
         check = (testCheck(opponent(currentPlayer))) ? true : false; // Caso o oponente fique em check retorna true, caso contrario retorna false.
 
         if (testCheck(opponent(currentPlayer))) { // Se o testeCheck permanecer no atual oponente
@@ -101,6 +116,36 @@ public class ChessMatch {
 
         return (ChessPiece) capturedPiece; // Retorna a peça capturada, é feito um DownCast
     }
+
+    // Método para troca de peça promovida
+    public ChessPiece replacePromotedPiece(String type){
+        if (promoted == null) { // Se não houver promoção
+            throw new IllegalStateException("There is no piece to be promoted"); // Imprimi está exceção
+        }
+        if (!type.equals("B") && !type.equals("H") && !type.equals("R") && !type.equals("Q")){ // Se o tipo de string não for igual a B, H, R e Q
+            throw new InvalidParameterException("Invalid type for promotion"); // Imprima está exceção
+        }
+
+        Position pos = promoted.getChessPosition().toPosition(); // Pega a posição da peça promovida
+        Piece p = board.removePiece(pos); // Remove a peça que está nesta posição
+        piecesOnTheBoard.remove(p); // E remove a peça do tabuleiro
+
+        ChessPiece newPiece = newPiece(type, promoted.getColor()); // Pega a nova peça em sua respectiva cor
+        board.placePiece(newPiece, pos); // Coloca a nova peça na posição onde antes havia o peão
+        piecesOnTheBoard.add(newPiece); // E adiciona a nova peça ao tabuleiro
+
+        return newPiece; // Retorna a nova peça
+
+    }
+
+    // Método para nova peça da promoção
+    private ChessPiece newPiece(String type, Color color){
+        if (type.equals("B")) return new Bishop(board, color); // Se a string for igual a B, retorne um novo bishop ao tabuleiro na cor representante
+        if (type.equals("H")) return new Horse(board, color); // Se a string for igual a H, retorne um novo horse ao tabuleiro na cor representante
+        if (type.equals("Q")) return new Queen(board, color); // Se a string for igual a Q, retorne um novo queen ao tabuleiro na cor representante
+        return new Rook(board, color); // Se a string for igual a R, retorne um novo rook ao tabuleiro na cor representante
+    }
+
 
     // Método responsavel por fazer o movimento das peças
     private Piece makeMove(Position source, Position target){

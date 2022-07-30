@@ -40,6 +40,12 @@ public class Program {
                 if (capturedPiece != null){ // Se a peça capturada for diferente de nulo
                     captured.add(capturedPiece); // adicione a lista a peça capturada.
                 }
+
+                if (chessMatch.getPromoted() != null){ // Se durante a partida a promoção for diferente de nulo, ou seja, houver promoção
+                    System.out.print("Enter piece for promotion: (B/N/R/Q): "); // Imprima está frase
+                    String type = sc.nextLine(); // Escolha a peça para a qual deseja a promoção usando as letras acima
+                    chessMatch.replacePromotedPiece(type); // Troque o peão promovido pela escolha da respectiva peça.
+                }
             } catch (ChessException e ){ // Caso haja uma ChessException
                 System.out.println(e.getMessage()); // Imprimia a mensagem descrita na tela.
                 sc.nextLine(); // Enter para pular uma linha
