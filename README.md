@@ -27,7 +27,7 @@ As seguintes ferramentas foram usadas na construção do projeto:
 
 ### Autor
 
-![avatar ](https://user-images.githubusercontent.com/101439670/181937663-a50b63b0-5ab6-4014-b10d-c1ee71e85109.png/100x100)
+![avatar](https://user-images.githubusercontent.com/101439670/181940218-4f68ffb9-0d35-40df-b8e9-86629333d244.png)
 
 
 Made with 💜 by Jonh Dev 👋
